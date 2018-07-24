@@ -1,21 +1,26 @@
 ﻿using System;
+using TheGreatC.Domain;
 using TheGreatC.Domain.Models;
 using System.Collections.Generic;
-using TheGreatC.Common.Configuration;
-using TheGreatC.Domain.ViewModels;
 
 namespace TheGreatC.Runtime
 {
-    public class Core : Translator
+    public class Core
     {
-        public static void Start()
+        public static readonly Core Instance = new Core();
+
+        private Core()
+        {
+        }
+
+        public void Start()
         {
             // Create List Of Installed Commands
-            LoadInstalledCommands();
+            CommandFactory.Instance.LoadInstalledCommands();
             // I/O Loop
             while (true)
             {
-                var consoleInput = ReadFromConsole();
+                var consoleInput = Translator.Instance.ReadFromConsole();
                 if (string.IsNullOrWhiteSpace(consoleInput)) continue;
                 try
                 {
@@ -23,12 +28,12 @@ namespace TheGreatC.Runtime
                     var cmd = new Command(consoleInput);
 
                     // Execute the command
-                    var result = Execute(cmd);
+                    var result = Translator.Instance.Execute(cmd);
 
                     // If Error Occured
                     if (!result.Response.IsSuccessful)
                     {
-                        WriteToConsole(
+                        Translator.Instance.WriteToConsole(
                             result.Response.Message.Contains("Not Found")
                                 ? WrittingFormatType.NotFound
                                 : WrittingFormatType.Error, result.Response.Message);
@@ -41,8 +46,10 @@ namespace TheGreatC.Runtime
                                 case List<string> _:
                                     foreach (var line in (List<string>)result.Result)
                                     {
-                                        WriteToConsole(WrittingFormatType.None, line);
+                                        Translator.Instance.WriteToConsole(WrittingFormatType.None,
+                                            line);
                                     }
+
                                     break;
                             }
                         }
@@ -54,26 +61,26 @@ namespace TheGreatC.Runtime
                         switch (result.Result)
                         {
                             case string _:
-                                WriteToConsole(WrittingFormatType.Message, result.Response.Message);
+                                Translator.Instance.WriteToConsole(WrittingFormatType.Message,
+                                    result.Response.Message);
                                 break;
                             case List<string> _:
                                 foreach (var line in (List<string>)result.Result)
                                 {
-                                    WriteToConsole(WrittingFormatType.Message, line);
+                                    Translator.Instance.WriteToConsole(WrittingFormatType.Message,
+                                        line);
                                 }
+
                                 break;
                         }
                     }
                 }
+                // ToDo: Handle Errors
                 catch (Exception ex)
                 {
                     // Something Went Wrong - Write out the error
-                    WriteToConsole(WrittingFormatType.Error, ex.Message);
-                    // Log Error
-                    if (Properties.LogFeature)
-                        Logger.Log(ex.Message);
+                    Translator.Instance.WriteToConsole(WrittingFormatType.Error, ex.Message);
                 }
-
             }
         }
     }
