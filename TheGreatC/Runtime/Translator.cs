@@ -5,32 +5,35 @@ using System.Reflection;
 using TheGreatC.Domain.Models;
 using System.Collections.Generic;
 using TheGreatC.Domain.ViewModels;
-using TheGreatC.Common.Configuration;
 
 namespace TheGreatC.Runtime
 {
-    public class Translator : CommandFactory
+    // Output Writing Mehtod
+    public enum WrittingFormatType
+    {
+        Success = 0,
+        Message = 1,
+        Error = 2,
+        NotFound = 3,
+        WentWrong = 4,
+        Warning = 5,
+        None = 6
+    }
+
+    public class Translator
     {
         private const string ReadPrompt = "-> ";
 
-        protected new static readonly string CommandNameSpace = Properties.CommandsNamespace;
+        public static readonly Translator Instance = new Translator();
 
-        // Output Writing Mehtod
-        public enum WrittingFormatType
+        private Translator()
         {
-            Success = 0,
-            Message = 1,
-            Error = 2,
-            NotFound = 3,
-            WentWrong = 4,
-            Warning = 5,
-            None = 6
         }
 
-        public static CommandResult Execute(Command command)
+        public CommandResult Execute(Command command)
         {
             // Validate the command name:
-            if (!CommandLibraries.ContainsKey(command.LibraryClassName))
+            if (CommandFactory.Instance.CommandLibraries.All(x => x.Item1 != command.LibraryClassName))
             {
                 return new CommandResult()
                 {
@@ -41,15 +44,20 @@ namespace TheGreatC.Runtime
                         IsSuccessful = false
                     }
                 };
-
             }
-            var methodDictionary = CommandLibraries[command.LibraryClassName];
-            if (!methodDictionary.ContainsKey(command.Name))
+
+            var methodDictionary =
+                CommandFactory.Instance.CommandLibraries.First(x => x.Item1 == command.LibraryClassName);
+
+            if (!methodDictionary.Item2.ContainsKey(command.Name))
             {
-                // Check For Similar Commands To Offer
-                var similarCommands = methodDictionary.Where(c => c.Key.ToLower().Contains(command.Name.ToLower())).ToList().Take(5);
+                // Check For Similar Commands From Same Library To Offer
+                var similarCommands = methodDictionary.Item2
+                    .Where(c => c.Key.ToLower().Contains(command.Name.ToLower()))
+                    .ToList().Take(5);
                 var similarCommandsMessage = new List<string> { "Similar Commands: ", "---------" };
-                var keyValuePairs = similarCommands as IList<KeyValuePair<string, IEnumerable<ParameterInfo>>> ?? similarCommands.ToList();
+                var keyValuePairs = similarCommands as IList<KeyValuePair<string, IEnumerable<ParameterInfo>>> ??
+                                    similarCommands.ToList();
 
                 if (!keyValuePairs.Any())
                 {
@@ -81,7 +89,7 @@ namespace TheGreatC.Runtime
             // -------------------------------------------------------------------------------
 
             var methodParameterValueList = new List<object>();
-            IEnumerable<ParameterInfo> paramInfoList = methodDictionary[command.Name].ToList();
+            IEnumerable<ParameterInfo> paramInfoList = methodDictionary.Item2[command.Name].ToList();
 
             // Validate proper # of required arguments provided. Some may be optional:
             var requiredParams = paramInfoList.Where(p => p.IsOptional == false);
@@ -99,8 +107,9 @@ namespace TheGreatC.Runtime
             {
                 var missingRequiredArgs = requiredParamsInfos.Select(x => x.Name).ToList();
 
-                var missingArgsMessage = commandArgs.RequiredArgs >= 2 ?
-                    $"Error: 'Missing Required Arguments For Command Found' - {commandArgs.RequiredArgs} Required - Arguments:" : $"Error: 'Missing Required Argument For Command Found' - {commandArgs.RequiredArgs} Required - Argument:";
+                var missingArgsMessage = commandArgs.RequiredArgs >= 2
+                    ? $"Error: 'Missing Required Arguments For Command Found' - {commandArgs.RequiredArgs} Required - Arguments:"
+                    : $"Error: 'Missing Required Argument For Command Found' - {commandArgs.RequiredArgs} Required - Argument:";
                 for (var i = 0; i < missingRequiredArgs.Count; i++)
                 {
                     if (i == 0)
@@ -128,18 +137,21 @@ namespace TheGreatC.Runtime
             if (commandArgs.OptionalArgs + commandArgs.RequiredArgs > commandArgs.ProvidedArgs)
             {
                 var missingOptionalArgs = optionalParamsInfos.Select(x => x.Name).ToList();
-                var missingOptionalMessage = commandArgs.OptionalArgs >= 2 ?
-                    $"Warning: 'Missing Optional Arguments For Command Found' - {commandArgs.OptionalArgs} Optional - Arguments:" : $"Warning: 'Missing Optional Argument For Command Found' - {commandArgs.OptionalArgs} Optional - Argument:";
+                var missingOptionalMessage = commandArgs.OptionalArgs >= 2
+                    ? $"Warning: 'Missing Optional Arguments For Command Found' - {commandArgs.OptionalArgs} Optional - Arguments:"
+                    : $"Warning: 'Missing Optional Argument For Command Found' - {commandArgs.OptionalArgs} Optional - Argument:";
 
                 for (var i = 0; i < missingOptionalArgs.Count; i++)
                 {
                     if (i == 0)
                     {
-                        missingOptionalMessage += $" {missingOptionalArgs[i]}:{optionalParamsInfos[i].ParameterType.Name} - DefaultValue:'{optionalParamsInfos[i].RawDefaultValue}'";
+                        missingOptionalMessage +=
+                            $" {missingOptionalArgs[i]}:{optionalParamsInfos[i].ParameterType.Name} - DefaultValue:'{optionalParamsInfos[i].RawDefaultValue}'";
                     }
                     else
                     {
-                        missingOptionalMessage += $", {missingOptionalArgs[i]}:{optionalParamsInfos[i].ParameterType.Name} - DefaultValue:'{optionalParamsInfos[i].RawDefaultValue}'";
+                        missingOptionalMessage +=
+                            $", {missingOptionalArgs[i]}:{optionalParamsInfos[i].ParameterType.Name} - DefaultValue:'{optionalParamsInfos[i].RawDefaultValue}'";
                     }
                 }
 
@@ -172,6 +184,7 @@ namespace TheGreatC.Runtime
                         methodParameterValueList.RemoveAt(i);
                         methodParameterValueList.Insert(i, value);
                     }
+                    // ToDo: Handle Errors
                     catch (ArgumentException)
                     {
                         var argumentName = methodParam.Name;
@@ -186,31 +199,14 @@ namespace TheGreatC.Runtime
             // Set up to invoke the method using reflection:
             // -------------------------------------------------------------------------------
 
-            #region If Commands Embeded In Main Project
-
-            //Assembly current = typeof(Program).Assembly;
-            //// Need the full Namespace for this:
-            //Type commandLibaryClass =
-            //    current.GetType(_CommandNamespace + "." + command.LibraryClassName); 
-
-            #endregion
-
-            #region If Commands Not Embeded In Main Project
-
-            var current = GetAssemblyByName(CommandNameSpace);
-            var commandLibaryClass =
-                current.GetType(CommandNameSpace + "." + command.LibraryClassName);
-
-            #endregion
-
-
             object[] inputArgs = null;
             if (methodParameterValueList.Count > 0)
             {
                 inputArgs = methodParameterValueList.ToArray();
             }
 
-            var typeInfo = commandLibaryClass;
+            // Command Type
+            var typeInfo = methodDictionary.Item3;
 
             // This will throw if the number of arguments provided does not match the number 
             // required by the method signature, even if some are optional:
@@ -238,106 +234,110 @@ namespace TheGreatC.Runtime
 
                 throw;
             }
-
         }
 
-        public static string ReadFromConsole(string promptMessage = "")
+        public string ReadFromConsole(string promptMessage = "")
         {
             // Show a prompt, and get input:
             Console.Write(ReadPrompt + promptMessage);
             return Console.ReadLine();
         }
 
-        public static void WriteToConsole(WrittingFormatType writingFormat, string message)
+        public void WriteToConsole(WrittingFormatType writingFormat, string message)
         {
-            if (message.Length <= 0) return;
-
-            switch (writingFormat)
+            while (true)
             {
-                case WrittingFormatType.Message:
-                    Console.SetCursorPosition((Console.WindowWidth - message.Length) / 2, Console.CursorTop);
-                    Console.WriteLine(message);
-                    break;
+                if (message.Length <= 0) return;
 
-                case WrittingFormatType.Error:
-                    Console.WriteLine("\n");
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.SetCursorPosition((Console.WindowWidth - message.Length) / 2, Console.CursorTop);
-                    Console.WriteLine(message);
-                    Console.WriteLine("\n");
-                    // Annoying Beep Sound! ψ(｀∇´)ψ
-                    //Console.Beep(1500, 250); 
-                    Console.ResetColor();
-                    break;
+                switch (writingFormat)
+                {
+                    case WrittingFormatType.Message:
+                        Console.SetCursorPosition((Console.WindowWidth - message.Length) / 2, Console.CursorTop);
+                        Console.WriteLine(message);
+                        break;
 
-                case WrittingFormatType.NotFound:
-                    // Log ASCII Art
-                    var text = new List<string>
-                    {
-                        @"    .    _    +     .  ______   .          .     '      .            '+",
-                        @"  (      /|\      _   _|      \___   .   +    '    .         *         ",
-                        @"    /\  ||||| .  | | |   | |      |       .    '                 .    '",
-                        @" __||||_|||||____| |_|_____________\___________________________________",
-                        @" . |||| |||||  /\   _____      _____  .   .       .            .      .",
-                        @"  . \|`-'|||| ||||    __________            .                          ",
-                        @"     \__ |||| ||||      .          .     .     .        -         .   .",
-                        @"  __    ||||`-'|||  .       .    __________                            ",
-                        @" .    . |||| ___/  ___________             .                           ",
-                        @" _   ___|||||__  _           .          _                              ",
-                        @"      _ `---'    .   .    .   _   .   .    .                           ",
-                        @" _  ^      .  -    .    -    .       -    .    .  .     -   .    .    -"
-                    };
+                    case WrittingFormatType.Error:
+                        Console.WriteLine("\n");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.SetCursorPosition((Console.WindowWidth - message.Length) / 2, Console.CursorTop);
+                        Console.WriteLine(message);
+                        Console.WriteLine("\n");
+                        // Annoying Beep Sound! ψ(｀∇´)ψ
+                        //Console.Beep(1500, 250); 
+                        Console.ResetColor();
+                        break;
 
-                    foreach (var line in text)
-                    {
-                        WriteToConsole(WrittingFormatType.Message, line);
-                    }
+                    case WrittingFormatType.NotFound:
+                        // Log ASCII Art
+                        var text = new List<string>
+                        {
+                            @"    .    _    +     .  ______   .          .     '      .            '+",
+                            @"  (      /|\      _   _|      \___   .   +    '    .         *         ",
+                            @"    /\  ||||| .  | | |   | |      |       .    '                 .    '",
+                            @" __||||_|||||____| |_|_____________\___________________________________",
+                            @" . |||| |||||  /\   _____      _____  .   .       .            .      .",
+                            @"  . \|`-'|||| ||||    __________            .                          ",
+                            @"     \__ |||| ||||      .          .     .     .        -         .   .",
+                            @"  __    ||||`-'|||  .       .    __________                            ",
+                            @" .    . |||| ___/  ___________             .                           ",
+                            @" _   ___|||||__  _           .          _                              ",
+                            @"      _ `---'    .   .    .   _   .   .    .                           ",
+                            @" _  ^      .  -    .    -    .       -    .    .  .     -   .    .    -"
+                        };
 
-                    // Log Error
-                    WriteToConsole(WrittingFormatType.Error, message);
-                    break;
+                        foreach (var line in text)
+                        {
+                            WriteToConsole(WrittingFormatType.Message, line);
+                        }
 
-                case WrittingFormatType.Success:
-                    break;
+                        // Log Error
+                        writingFormat = WrittingFormatType.Error;
+                        continue;
 
-                case WrittingFormatType.WentWrong:
-                    // Log ASCII Art
-                    text = new List<string>
-                    {
-                        @"                 _                 (Beep...Beep...)                   ",
-                        @"                /\\               ( Looks Like Something Went Wrong. )",
-                        @"                \ \\  \__/ \__/  /                                    ",
-                        @"                 \ \\ (oo) (oo) /                                     ",
-                        @"                  \_\\/~~\_/~~\_                                      ",
-                        @"                 _.-~===========~-._                                  ",
-                        @"                (___/_______________)                                 ",
-                        @"                   /  \_______/                                       ",
-                    };
+                    case WrittingFormatType.Success:
+                        break;
 
-                    foreach (var line in text)
-                    {
-                        WriteToConsole(WrittingFormatType.Message, line);
-                    }
+                    case WrittingFormatType.WentWrong:
+                        // Log ASCII Art
+                        text = new List<string>
+                        {
+                            @"                 _                 (Beep...Beep...)                   ",
+                            @"                /\\               ( Looks Like Something Went Wrong. )",
+                            @"                \ \\  \__/ \__/  /                                    ",
+                            @"                 \ \\ (oo) (oo) /                                     ",
+                            @"                  \_\\/~~\_/~~\_                                      ",
+                            @"                 _.-~===========~-._                                  ",
+                            @"                (___/_______________)                                 ",
+                            @"                   /  \_______/                                       ",
+                        };
 
-                    // Log Error
-                    WriteToConsole(WrittingFormatType.Error, message);
-                    break;
+                        foreach (var line in text)
+                        {
+                            WriteToConsole(WrittingFormatType.Message, line);
+                        }
 
-                case WrittingFormatType.Warning:
-                    Console.WriteLine("\n");
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.SetCursorPosition((Console.WindowWidth - message.Length) / 2, Console.CursorTop);
-                    Console.WriteLine(message);
-                    Console.WriteLine("\n");
-                    Console.ResetColor();
-                    break;
+                        // Log Error
+                        writingFormat = WrittingFormatType.Error;
+                        continue;
 
-                case WrittingFormatType.None:
-                    Console.WriteLine("\t" + message);
-                    break;
+                    case WrittingFormatType.Warning:
+                        Console.WriteLine("\n");
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.SetCursorPosition((Console.WindowWidth - message.Length) / 2, Console.CursorTop);
+                        Console.WriteLine(message);
+                        Console.WriteLine("\n");
+                        Console.ResetColor();
+                        break;
 
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(writingFormat), writingFormat, null);
+                    case WrittingFormatType.None:
+                        Console.WriteLine("\t" + message);
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(writingFormat), writingFormat, null);
+                }
+
+                break;
             }
         }
 
@@ -363,6 +363,7 @@ namespace TheGreatC.Runtime
                     {
                         throw new ArgumentException(exceptionMessage);
                     }
+
                     break;
 
                 case TypeCode.Int32:
@@ -374,10 +375,11 @@ namespace TheGreatC.Runtime
                     {
                         throw new ArgumentException(exceptionMessage);
                     }
+
                     break;
 
                 case TypeCode.Int64:
-                    if (Int64.TryParse(inputValue, out var number64))
+                    if (long.TryParse(inputValue, out var number64))
                     {
                         result = number64;
                     }
@@ -385,6 +387,7 @@ namespace TheGreatC.Runtime
                     {
                         throw new ArgumentException(exceptionMessage);
                     }
+
                     break;
 
                 case TypeCode.Boolean:
@@ -396,6 +399,7 @@ namespace TheGreatC.Runtime
                     {
                         throw new ArgumentException(exceptionMessage);
                     }
+
                     break;
 
                 case TypeCode.Byte:
@@ -407,6 +411,7 @@ namespace TheGreatC.Runtime
                     {
                         throw new ArgumentException(exceptionMessage);
                     }
+
                     break;
 
                 case TypeCode.Char:
@@ -418,6 +423,7 @@ namespace TheGreatC.Runtime
                     {
                         throw new ArgumentException(exceptionMessage);
                     }
+
                     break;
 
                 case TypeCode.DateTime:
@@ -429,6 +435,7 @@ namespace TheGreatC.Runtime
                     {
                         throw new ArgumentException(exceptionMessage);
                     }
+
                     break;
 
                 case TypeCode.Decimal:
@@ -440,6 +447,7 @@ namespace TheGreatC.Runtime
                     {
                         throw new ArgumentException(exceptionMessage);
                     }
+
                     break;
 
                 case TypeCode.Double:
@@ -451,6 +459,7 @@ namespace TheGreatC.Runtime
                     {
                         throw new ArgumentException(exceptionMessage);
                     }
+
                     break;
 
                 case TypeCode.Single:
@@ -462,6 +471,7 @@ namespace TheGreatC.Runtime
                     {
                         throw new ArgumentException(exceptionMessage);
                     }
+
                     break;
 
                 case TypeCode.UInt16:
@@ -473,6 +483,7 @@ namespace TheGreatC.Runtime
                     {
                         throw new ArgumentException(exceptionMessage);
                     }
+
                     break;
 
                 case TypeCode.UInt32:
@@ -484,6 +495,7 @@ namespace TheGreatC.Runtime
                     {
                         throw new ArgumentException(exceptionMessage);
                     }
+
                     break;
 
                 case TypeCode.UInt64:
@@ -495,6 +507,7 @@ namespace TheGreatC.Runtime
                     {
                         throw new ArgumentException(exceptionMessage);
                     }
+
                     break;
 
                 default:
@@ -503,6 +516,5 @@ namespace TheGreatC.Runtime
 
             return result;
         }
-
     }
 }

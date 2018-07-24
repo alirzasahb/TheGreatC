@@ -10,15 +10,19 @@ namespace TheGreatC.Domain
 {
     public class CommandFactory
     {
-        protected static readonly string CommandNameSpace = Properties.CommandsNamespace;
-        protected static Dictionary<string, Dictionary<string, IEnumerable<ParameterInfo>>> CommandLibraries;
+        public static readonly CommandFactory Instance = new CommandFactory();
 
-        protected static void LoadInstalledCommands()
+        private CommandFactory()
+        {
+        }
+
+        public List<Tuple<string, Dictionary<string, IEnumerable<ParameterInfo>>, Type>> CommandLibraries =
+            new List<Tuple<string, Dictionary<string, IEnumerable<ParameterInfo>>, Type>>();
+
+        public void LoadInstalledCommands()
         {
             // console are located in the commands namespace. Load 
             // references to each type in that namespace via reflection:
-            CommandLibraries = new Dictionary<string, Dictionary<string,
-                IEnumerable<ParameterInfo>>>();
 
             // Use reflection to load all of the classes in the Commands namespace:
 
@@ -33,10 +37,12 @@ namespace TheGreatC.Domain
 
             #region When Commands Embedded In External Project
 
-            var commandsAssembly = GetAssemblyByName(CommandNameSpace);
+            var commandsAssembly =
+                GetCommandsLibAssemblyByName(Properties.CommandsNamespace);
             //var commandClasses = commandsAssembly.GetTypes().Where(t => t.IsClass).ToList();
             // Get Classes And Make Check Constructors Not Included In CommandClasses
-            var commandClasses = commandsAssembly.GetTypes().Where(assembly => assembly.IsClass && !assembly.Name.Contains("<>c")).ToList();
+            var commandClasses = commandsAssembly.GetTypes()
+                .Where(assembly => assembly.IsClass && !assembly.Name.Contains("<>c")).ToList();
 
             #endregion
 
@@ -53,19 +59,23 @@ namespace TheGreatC.Domain
                 }
 
                 // Add the dictionary of methods for the current class into a dictionary of command classes:
-                CommandLibraries.Add(commandClass.Name, methodDictionary);
+                CommandLibraries.Add(
+                    new Tuple<string, Dictionary<string, IEnumerable<ParameterInfo>>, Type>(commandClass.Name,
+                        methodDictionary, commandClass));
             }
         }
 
-        public static Assembly GetAssemblyByName(string assemblyName)
+        public static Assembly GetCommandsLibAssemblyByName(string assemblyName)
         {
             try
             {
                 // ToDo: Create And Support Multiple AppDomain For Multiple DLLs
                 var path = Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory);
-                var assemblies = Directory.GetFiles(path ?? throw new InvalidOperationException(), "*.dll").Select(Assembly.LoadFile).ToList();
+                var assemblies = Directory.GetFiles(path ?? throw new InvalidOperationException(), "*.dll")
+                    .Select(Assembly.LoadFile).ToList();
                 return assemblies.FirstOrDefault(a => a.GetName().Name == assemblyName);
             }
+            // ToDo: Handle Errors
             catch (Exception)
             {
                 throw;
