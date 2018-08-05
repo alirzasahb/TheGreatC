@@ -24,16 +24,21 @@ namespace TheGreatC.Runtime
     {
         private const string ReadPrompt = "-> ";
 
-        public static readonly Translator Instance = new Translator();
+        static Translator _instance;
 
         private Translator()
         {
         }
 
+        public static Translator GetInstance()
+        {
+            return _instance ?? (_instance = new Translator());
+        }
+
         public CommandResult Execute(Command command)
         {
             // Validate the command name:
-            if (CommandFactory.Instance.CommandLibraries.All(x => x.Item1 != command.LibraryClassName))
+            if (CommandFactory.GetInstance().CommandLibraries.All(x => x.Item1 != command.LibraryClassName))
             {
                 return new CommandResult()
                 {
@@ -47,7 +52,7 @@ namespace TheGreatC.Runtime
             }
 
             var methodDictionary =
-                CommandFactory.Instance.CommandLibraries.First(x => x.Item1 == command.LibraryClassName);
+                CommandFactory.GetInstance().CommandLibraries.First(x => x.Item1 == command.LibraryClassName);
 
             if (!methodDictionary.Item2.ContainsKey(command.Name))
             {
