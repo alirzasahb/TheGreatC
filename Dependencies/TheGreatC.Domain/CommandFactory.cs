@@ -10,10 +10,15 @@ namespace TheGreatC.Domain
 {
     public class CommandFactory
     {
-        public static readonly CommandFactory Instance = new CommandFactory();
+        static  CommandFactory _instance;
 
         private CommandFactory()
         {
+        }
+
+        public static CommandFactory GetInstance()
+        {
+            return _instance ?? (_instance = new CommandFactory());
         }
 
         public List<Tuple<string, Dictionary<string, IEnumerable<ParameterInfo>>, Type>> CommandLibraries =

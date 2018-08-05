@@ -20,7 +20,7 @@ namespace TheGreatC
             ShowSplash();
 
             // Start Core Service (For I/O Loop & Etc...)
-            Core.Instance.Start();
+            Core.GetInstance().Start();
         }
 
         // CLI Initiale Splash + Info
@@ -45,7 +45,7 @@ namespace TheGreatC
 
             foreach (var line in text)
             {
-                Translator.Instance.WriteToConsole(WrittingFormatType.Message, line);
+                Translator.GetInstance().WriteToConsole(WrittingFormatType.Message, line);
             }
             #endregion
         }
