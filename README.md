@@ -1,6 +1,5 @@
 # The Great C
 > A Simple Solution To Create And Extend Your Own Command Line Interface In C# (dotNet Core)
-</br>
 
 ## Usage
 **Assumptions:**
