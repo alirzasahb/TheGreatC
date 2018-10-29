@@ -69,6 +69,7 @@ Extracted And Developed From 'ConsoleApplicationBase' Project, Original Author J
  https://github.com/TypecastException/ConsoleApplicationBase
 </br>
 Ascii Arts Extracted From: http://www.ascii-art.de/
+</br>
 Desert - Bob Allison
 </br>
 UFO - unknown
