@@ -68,6 +68,7 @@ Extracted And Developed From 'ConsoleApplicationBase' Project, Original Author J
 </br>
  https://github.com/TypecastException/ConsoleApplicationBase
 </br>
+</br>
 Ascii Arts Extracted From: http://www.ascii-art.de/
 </br>
 Desert - Bob Allison
