@@ -67,3 +67,8 @@ public class myCommandsLib{
 Extracted And Developed From 'ConsoleApplicationBase' Project, Original Author John Atten:
 </br>
  https://github.com/TypecastException/ConsoleApplicationBase
+ </ br>
+Ascii Arts Extracted From: http://www.ascii-art.de/
+Desert - Bob Allison
+UFO - unknown
+Universe - unknown
