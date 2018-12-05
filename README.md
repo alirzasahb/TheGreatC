@@ -76,5 +76,3 @@ Desert - Bob Allison
 UFO - unknown
 </br>
 Universe - unknown
-
-Made With ❤️
