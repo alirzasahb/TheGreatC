@@ -2,7 +2,6 @@
 using Spectre.Console;
 using System;
 using System.IO;
-using System.Threading;
 
 namespace TheGreatC.Common
 {

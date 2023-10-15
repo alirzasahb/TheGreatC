@@ -8,7 +8,7 @@ namespace TheGreatC.Commands
     /// </summary>
     public static class BuiltIn
     {
-        public static List<string> Credits()
+        public static List<string> About()
         {
             Console.Clear();
             var text = new List<string>
@@ -31,8 +31,9 @@ namespace TheGreatC.Commands
                 @"  .      .  .  .  *   .  *  . +..  .      +      *             *        ",
                 @"   .      .   . .   .   .   . .  +   .    .            +    . . .       ",
                 @"                                                                        ",
-                @" The Name 'The Great C' Was Inspired By A Short Story With Same Exact   ",
-                @" Name Written By 'Philip K. Dick'.                                      ",
+                @"'The Great C' is a science fiction short story by American writer       ",
+                @" Philip K. Dick, first published in Cosmos Science Fiction and Fantasy  ",
+                @" Magazine in 1953.                                                      ",
                 @"                                                                        ",
                 @" Developer: http://github.com/alirzasahb                                ",
                 @"                                                                        ",
@@ -40,7 +41,7 @@ namespace TheGreatC.Commands
                 @" Original Author John Atten:                                            ",
                 @" https://github.com/TypecastException/ConsoleApplicationBase            ",
                 @"                                                                        ",
-                @" Ascii Arts (http://www.ascii-art.de/):                                 ",
+                @" ASCII Arts (http://www.ascii-art.de/):                                 ",
                 @" Desert - Bob Allison                                ",
                 @" UFO - unknown                                       ",
                 @" Universe - unknown                                  "
@@ -64,14 +65,6 @@ namespace TheGreatC.Commands
         public static void Exit()
         {
             Environment.Exit(0);
-        }
-    }
-
-    public static class Del
-    {
-        public static void Eh(string s, int i = 0)
-        {
-            Console.WriteLine($"STR: {s} + INT: {i}");
         }
     }
 }
