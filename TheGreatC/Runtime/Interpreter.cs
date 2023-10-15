@@ -2,23 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using TheGreatC.Common.Utilities;
 using TheGreatC.Domain;
 using TheGreatC.Domain.DTOs;
 using TheGreatC.Domain.Models;
+using static TheGreatC.Common.Utilities.ConsoleWriter;
 
 namespace TheGreatC.Runtime
 {
-    // Output Writing Mehtod
-    public enum WrittingFormatType
-    {
-        Success = 0,
-        Message = 1,
-        Error = 2,
-        NotFound = 3,
-        WentWrong = 4,
-        Warning = 5,
-        None = 6
-    }
+
 
     public static class Interpreter
     {
@@ -150,7 +142,7 @@ namespace TheGreatC.Runtime
                     }
                 }
 
-                WriteToConsole(WrittingFormatType.Warning, missingOptionalMessage);
+                ConsoleWriter.Write(ConsoleWritingTypes.Warning, missingOptionalMessage);
             }
 
             // Make sure all arguments are coerced to the proper type, and that there is a 
@@ -238,103 +230,6 @@ namespace TheGreatC.Runtime
             return Console.ReadLine();
         }
 
-        public static void WriteToConsole(WrittingFormatType writingFormat, string message)
-        {
-            while (true)
-            {
-                if (message.Length <= 0) return;
-
-                switch (writingFormat)
-                {
-                    case WrittingFormatType.Message:
-                        Console.SetCursorPosition((Console.WindowWidth - message.Length) / 2, Console.CursorTop);
-                        Console.WriteLine(message);
-                        break;
-
-                    case WrittingFormatType.Error:
-                        Console.WriteLine("\n");
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.SetCursorPosition((Console.WindowWidth - message.Length) / 2, Console.CursorTop);
-                        Console.WriteLine(message);
-                        Console.WriteLine("\n");
-                        // Annoying Beep Sound! ψ(｀∇´)ψ
-                        //Console.Beep(1500, 250); 
-                        Console.ResetColor();
-                        break;
-
-                    case WrittingFormatType.NotFound:
-                        // Log ASCII Art
-                        var text = new List<string>
-                        {
-                            @"    .    _    +     .  ______   .          .     '      .            '+",
-                            @"  (      /|\      _   _|      \___   .   +    '    .         *         ",
-                            @"    /\  ||||| .  | | |   | |      |       .    '                 .    '",
-                            @" __||||_|||||____| |_|_____________\___________________________________",
-                            @" . |||| |||||  /\   _____      _____  .   .       .            .      .",
-                            @"  . \|`-'|||| ||||    __________            .                          ",
-                            @"     \__ |||| ||||      .          .     .     .        -         .   .",
-                            @"  __    ||||`-'|||  .       .    __________                            ",
-                            @" .    . |||| ___/  ___________             .                           ",
-                            @" _   ___|||||__  _           .          _                              ",
-                            @"      _ `---'    .   .    .   _   .   .    .                           ",
-                            @" _  ^      .  -    .    -    .       -    .    .  .     -   .    .    -"
-                        };
-
-                        foreach (var line in text)
-                        {
-                            WriteToConsole(WrittingFormatType.Message, line);
-                        }
-
-                        // Log Error
-                        writingFormat = WrittingFormatType.Error;
-                        continue;
-
-                    case WrittingFormatType.Success:
-                        break;
-
-                    case WrittingFormatType.WentWrong:
-                        // Log ASCII Art
-                        text = new List<string>
-                        {
-                            @"                 _                 (Beep...Beep...)                   ",
-                            @"                /\\               ( Looks Like Something Went Wrong. )",
-                            @"                \ \\  \__/ \__/  /                                    ",
-                            @"                 \ \\ (oo) (oo) /                                     ",
-                            @"                  \_\\/~~\_/~~\_                                      ",
-                            @"                 _.-~===========~-._                                  ",
-                            @"                (___/_______________)                                 ",
-                            @"                   /  \_______/                                       ",
-                        };
-
-                        foreach (var line in text)
-                        {
-                            WriteToConsole(WrittingFormatType.Message, line);
-                        }
-
-                        // Log Error
-                        writingFormat = WrittingFormatType.Error;
-                        continue;
-
-                    case WrittingFormatType.Warning:
-                        Console.WriteLine("\n");
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.SetCursorPosition((Console.WindowWidth - message.Length) / 2, Console.CursorTop);
-                        Console.WriteLine(message);
-                        Console.WriteLine("\n");
-                        Console.ResetColor();
-                        break;
-
-                    case WrittingFormatType.None:
-                        Console.WriteLine("\t" + message);
-                        break;
-
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(writingFormat), writingFormat, null);
-                }
-
-                break;
-            }
-        }
 
         private static object CoerceArgument(Type requiredType, string inputValue)
         {

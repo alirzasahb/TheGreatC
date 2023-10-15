@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using TheGreatC.Common;
+using TheGreatC.Common.Utilities;
 using TheGreatC.Runtime;
 
 namespace TheGreatC
@@ -13,6 +14,8 @@ namespace TheGreatC
             Console.InputEncoding = Encoding.UTF8;
             ConfigurationManager.Build();
             Console.Title = ConfigurationManager.SharedConfigurations["Title"];
+            SpectreConsoleWriter.WriteVersion();
+            // ToDo: Full Screen Launch
             Core.Start();
         }
     }
