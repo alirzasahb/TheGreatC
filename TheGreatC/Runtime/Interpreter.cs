@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using TheGreatC.Common.Utilities;
 using TheGreatC.Domain;
 using TheGreatC.Domain.DTOs;
 using TheGreatC.Domain.Models;
-using static TheGreatC.Common.Utilities.ConsoleWriter;
+using static TheGreatC.Common.Utilities.SpectreConsoleWriter;
 
 namespace TheGreatC.Runtime
 {
@@ -125,8 +124,8 @@ namespace TheGreatC.Runtime
             {
                 var missingOptionalArgs = optionalParamsInfos.Select(x => x.Name).ToList();
                 var missingOptionalMessage = commandArgs.OptionalArgs >= 2
-                    ? $"Warning: 'Missing Optional Arguments For Command Found' - {commandArgs.OptionalArgs} Optional - Arguments:"
-                    : $"Warning: 'Missing Optional Argument For Command Found' - {commandArgs.OptionalArgs} Optional - Argument:";
+                    ? $"Warning: 'Missing Optional Arguments For Following Command' - {commandArgs.OptionalArgs} Optional - Arguments:"
+                    : $"Warning: 'Missing Optional Argument For Following Command' - {commandArgs.OptionalArgs} Optional - Argument:";
 
                 for (var i = 0; i < missingOptionalArgs.Count; i++)
                 {
@@ -142,7 +141,7 @@ namespace TheGreatC.Runtime
                     }
                 }
 
-                ConsoleWriter.Write(ConsoleWritingTypes.Warning, missingOptionalMessage);
+                Write(SpectreWritingType.Warning, missingOptionalMessage);
             }
 
             // Make sure all arguments are coerced to the proper type, and that there is a 

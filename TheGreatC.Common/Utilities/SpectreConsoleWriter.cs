@@ -10,7 +10,9 @@ namespace TheGreatC.Common.Utilities
             Info = 0,
             Figlet,
             Success,
-            Warning
+            Warning,
+            NotFound,
+
         }
 
         public static void WriteException(System.Exception exception)
@@ -44,20 +46,34 @@ namespace TheGreatC.Common.Utilities
             switch (writingFormat)
             {
                 case SpectreWritingType.Info:
-                    break;
+                    {
+                        AnsiConsole.MarkupLine($"{message}");
+                        break;
+                    }
                 case SpectreWritingType.Figlet:
                     {
                         AnsiConsole.Write(
-                        new FigletText(message)
-                            .Centered()
-                            );
+                            new FigletText(message)
+                                .Centered()
+                                );
 
                         break;
                     }
                 case SpectreWritingType.Success:
-                    break;
+                    {
+                        AnsiConsole.MarkupLine($"[green]{message}[/]");
+                        break;
+                    }
                 case SpectreWritingType.Warning:
-                    break;
+                    {
+                        AnsiConsole.MarkupLine($"[yellow]{message}[/]");
+                        break;
+                    }
+                case SpectreWritingType.NotFound:
+                    {
+                        AnsiConsole.MarkupLine($"[red]{message}[/]");
+                        break;
+                    }
             }
         }
 

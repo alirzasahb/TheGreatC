@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using TheGreatC.Common.Utilities;
 using TheGreatC.Domain;
 using TheGreatC.Domain.Models;
-using static TheGreatC.Common.Utilities.ConsoleWriter;
 
 namespace TheGreatC.Runtime
 {
@@ -10,6 +10,8 @@ namespace TheGreatC.Runtime
     {
         public static void Start()
         {
+            // ToDo: Port All Writers To SpectreConsoleWriter
+
             // Create List Of Installed Commands
             Commander.LoadCommands();
             // I/O Loop
@@ -28,10 +30,10 @@ namespace TheGreatC.Runtime
                     // If Error Occured
                     if (!result.Response.IsSuccessful)
                     {
-                        Write(
-                            result.Response.Message.Contains("Not Found")
-                                ? ConsoleWritingTypes.NotFound
-                                : ConsoleWritingTypes.Error, result.Response.Message);
+                        if (result.Response.Message.Contains("Not Found"))
+                            ConsoleWriter.Write(ConsoleWriter.ConsoleWritingTypes.NotFound, result.Response.Message);
+                        else
+                            ConsoleWriter.Write(ConsoleWriter.ConsoleWritingTypes.Error, result.Response.Message);
 
                         // If Error Occured With Object (Message Or Etc...)
                         if (result.Result != null)
@@ -41,7 +43,7 @@ namespace TheGreatC.Runtime
                                 case List<string> _:
                                     foreach (var line in (List<string>)result.Result)
                                     {
-                                        Write(ConsoleWritingTypes.None,
+                                        ConsoleWriter.Write(ConsoleWriter.ConsoleWritingTypes.None,
                                             line);
                                     }
 
@@ -51,18 +53,17 @@ namespace TheGreatC.Runtime
                     }
                     else
                     {
-                        // ToDo: Handle Different Types Of Command Output
                         // Write out the result
                         switch (result.Result)
                         {
                             case string _:
-                                Write(ConsoleWritingTypes.Message,
-                                    result.Response.Message);
+                                ConsoleWriter.Write(ConsoleWriter.ConsoleWritingTypes.Message,
+                                        result.Response.Message);
                                 break;
                             case List<string> _:
                                 foreach (var line in (List<string>)result.Result)
                                 {
-                                    Write(ConsoleWritingTypes.Message,
+                                    ConsoleWriter.Write(ConsoleWriter.ConsoleWritingTypes.Message,
                                         line);
                                 }
 
@@ -70,11 +71,9 @@ namespace TheGreatC.Runtime
                         }
                     }
                 }
-                // ToDo: Handle Errors
                 catch (Exception ex)
                 {
-                    // Something Went Wrong - Write out the error
-                    Write(ConsoleWritingTypes.Error, ex.Message);
+                    SpectreConsoleWriter.WriteException(ex);
                 }
             }
         }
