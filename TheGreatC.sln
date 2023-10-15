@@ -1,12 +1,12 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheGreatC", "TheGreatC\TheGreatC.csproj", "{4703C517-665E-4598-A6A5-0E896A09963D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheGreatC", "TheGreatC\TheGreatC.csproj", "{4703C517-665E-4598-A6A5-0E896A09963D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheGreatC.Domain", "Dependencies\TheGreatC.Domain\TheGreatC.Domain.csproj", "{01C5DEDB-1F96-4BF6-BA66-61D5EFE3C1C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheGreatC.Domain", "TheGreatC.Domain\TheGreatC.Domain.csproj", "{01C5DEDB-1F96-4BF6-BA66-61D5EFE3C1C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheGreatC.Commands", "Dependencies\TheGreatC.Commands\TheGreatC.Commands.csproj", "{24FD8B0A-33AF-44AF-97AF-703ABCF568E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheGreatC.Commands", "TheGreatC.Commands\TheGreatC.Commands.csproj", "{24FD8B0A-33AF-44AF-97AF-703ABCF568E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheGreatC.Common", "Dependencies\TheGreatC.Common\TheGreatC.Common.csproj", "{94A41E33-3262-401B-AADE-E7B2EFE0365F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheGreatC.Common", "TheGreatC.Common\TheGreatC.Common.csproj", "{94A41E33-3262-401B-AADE-E7B2EFE0365F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

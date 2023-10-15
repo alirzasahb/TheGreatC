@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using TheGreatC.Common;
 using TheGreatC.Domain;
 using TheGreatC.Domain.DTOs;
 using TheGreatC.Domain.Models;
@@ -21,20 +20,15 @@ namespace TheGreatC.Runtime
         None = 6
     }
 
-    public class Translator
+    public static class Interpreter
     {
-        private const string ReadPrompt = "-> ";
+        private static readonly string ReadPrompt = "\u2192 ";
 
-        public static readonly Translator Instance = new Translator();
 
-        private Translator()
-        {
-        }
-
-        public CommandResult Execute(Command command)
+        public static CommandResult Execute(Command command)
         {
             // Validate the command name:
-            if (CommandFactory.Instance.CommandLibraries.All(x => x.Item1 != command.LibraryClassName))
+            if (Commander.CommandLibraries.All(x => x.Item1 != command.LibraryClassName))
             {
                 return new CommandResult()
                 {
@@ -48,15 +42,15 @@ namespace TheGreatC.Runtime
             }
 
             var methodDictionary =
-                CommandFactory.Instance.CommandLibraries.First(x => x.Item1 == command.LibraryClassName);
-            
+                Commander.CommandLibraries.First(x => x.Item1 == command.LibraryClassName);
+
             if (!methodDictionary.Item2.ContainsKey(command.Name))
             {
                 // Check For Similar Commands From Same Library To Offer
                 var similarCommands = methodDictionary.Item2
                     .Where(c => c.Key.ToLower().Contains(command.Name.ToLower()))
                     .ToList().Take(5);
-                var similarCommandsMessage = new List<string> {"Similar Commands: ", "---------"};
+                var similarCommandsMessage = new List<string> { "Similar Commands: ", "---------" };
                 var keyValuePairs = similarCommands as IList<KeyValuePair<string, IEnumerable<ParameterInfo>>> ??
                                     similarCommands.ToList();
 
@@ -99,9 +93,9 @@ namespace TheGreatC.Runtime
             var optionalParamsInfos = optionalParams as ParameterInfo[] ?? optionalParams.ToArray();
             var commandArgs = new CommandArgumentsDetail()
             {
-                OptionalArgs = optionalParamsInfos.Count(),
+                OptionalArgs = optionalParamsInfos.Length,
                 ProvidedArgs = command.Arguments.Count(),
-                RequiredArgs = requiredParamsInfos.Count()
+                RequiredArgs = requiredParamsInfos.Length
             };
 
             if (commandArgs.RequiredArgs > commandArgs.ProvidedArgs)
@@ -237,14 +231,14 @@ namespace TheGreatC.Runtime
             }
         }
 
-        public string ReadFromConsole(string promptMessage = "")
+        public static string ReadFromConsole()
         {
             // Show a prompt, and get input:
-            Console.Write(ReadPrompt + promptMessage);
+            Console.Write(ReadPrompt);
             return Console.ReadLine();
         }
 
-        public void WriteToConsole(WrittingFormatType writingFormat, string message)
+        public static void WriteToConsole(WrittingFormatType writingFormat, string message)
         {
             while (true)
             {
@@ -348,7 +342,7 @@ namespace TheGreatC.Runtime
             var exceptionMessage =
                 $"Cannnot Coerce The Input Argument {inputValue} To Required Type {requiredType.Name}";
 
-            object result = null;
+            object result;
             switch (requiredTypeCode)
             {
                 case TypeCode.String:

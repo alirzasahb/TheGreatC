@@ -26,7 +26,7 @@ namespace TheGreatC.Domain.Models
                     Name = stringArray[i];
 
                     // Set the default:
-                    LibraryClassName = "Default";
+                    LibraryClassName = "BuiltIn";
                     var s = stringArray[0].Split('.');
                     if (s.Length != 2) continue;
                     LibraryClassName = s[0];

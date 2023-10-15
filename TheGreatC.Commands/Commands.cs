@@ -4,9 +4,9 @@ using System.Collections.Generic;
 namespace TheGreatC.Commands
 {
     /// <summary>
-    /// Contains the implementations of the built-in commands.
+    /// Contains the implementations of the built in commands.
     /// </summary>
-    public static class Default
+    public static class BuiltIn
     {
         public static List<string> Credits()
         {

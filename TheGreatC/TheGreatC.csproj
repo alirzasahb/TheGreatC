@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Dependencies\TheGreatC.Commands\TheGreatC.Commands.csproj" />
-    <ProjectReference Include="..\Dependencies\TheGreatC.Common\TheGreatC.Common.csproj" />
-    <ProjectReference Include="..\Dependencies\TheGreatC.Domain\TheGreatC.Domain.csproj" />
+    <ProjectReference Include="..\TheGreatC.Commands\TheGreatC.Commands.csproj" />
+    <ProjectReference Include="..\TheGreatC.Common\TheGreatC.Common.csproj" />
+    <ProjectReference Include="..\TheGreatC.Domain\TheGreatC.Domain.csproj" />
   </ItemGroup>
 </Project>

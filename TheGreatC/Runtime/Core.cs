@@ -1,39 +1,33 @@
 ﻿using System;
-using TheGreatC.Domain.Models;
 using System.Collections.Generic;
 using TheGreatC.Domain;
+using TheGreatC.Domain.Models;
 
 namespace TheGreatC.Runtime
 {
-    public class Core
+    public static class Core
     {
-        public static readonly Core Instance = new Core();
-
-        private Core()
-        {
-        }
-
-        public void Start()
+        public static void Start()
         {
             // Create List Of Installed Commands
-            CommandFactory.Instance.LoadInstalledCommands();
+            Commander.LoadCommands();
             // I/O Loop
             while (true)
             {
-                var consoleInput = Translator.Instance.ReadFromConsole();
+                var consoleInput = Interpreter.ReadFromConsole();
                 if (string.IsNullOrWhiteSpace(consoleInput)) continue;
                 try
                 {
-                    // Create a ConsoleCommand instance:
+                    // Create A ConsoleCommand instance:
                     var cmd = new Command(consoleInput);
 
                     // Execute the command
-                    var result = Translator.Instance.Execute(cmd);
+                    var result = Interpreter.Execute(cmd);
 
                     // If Error Occured
                     if (!result.Response.IsSuccessful)
                     {
-                        Translator.Instance.WriteToConsole(
+                        Interpreter.WriteToConsole(
                             result.Response.Message.Contains("Not Found")
                                 ? WrittingFormatType.NotFound
                                 : WrittingFormatType.Error, result.Response.Message);
@@ -44,9 +38,9 @@ namespace TheGreatC.Runtime
                             switch (result.Result)
                             {
                                 case List<string> _:
-                                    foreach (var line in (List<string>) result.Result)
+                                    foreach (var line in (List<string>)result.Result)
                                     {
-                                        Translator.Instance.WriteToConsole(WrittingFormatType.None,
+                                        Interpreter.WriteToConsole(WrittingFormatType.None,
                                             line);
                                     }
 
@@ -61,13 +55,13 @@ namespace TheGreatC.Runtime
                         switch (result.Result)
                         {
                             case string _:
-                                Translator.Instance.WriteToConsole(WrittingFormatType.Message,
+                                Interpreter.WriteToConsole(WrittingFormatType.Message,
                                     result.Response.Message);
                                 break;
                             case List<string> _:
-                                foreach (var line in (List<string>) result.Result)
+                                foreach (var line in (List<string>)result.Result)
                                 {
-                                    Translator.Instance.WriteToConsole(WrittingFormatType.Message,
+                                    Interpreter.WriteToConsole(WrittingFormatType.Message,
                                         line);
                                 }
 
@@ -79,7 +73,7 @@ namespace TheGreatC.Runtime
                 catch (Exception ex)
                 {
                     // Something Went Wrong - Write out the error
-                    Translator.Instance.WriteToConsole(WrittingFormatType.Error, ex.Message);
+                    Interpreter.WriteToConsole(WrittingFormatType.Error, ex.Message);
                 }
             }
         }

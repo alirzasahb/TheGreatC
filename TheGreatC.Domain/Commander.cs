@@ -1,50 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Collections.Generic;
 using TheGreatC.Common;
 
 namespace TheGreatC.Domain
 {
-    public class CommandFactory
+    public static class Commander
     {
-        public static readonly CommandFactory Instance = new CommandFactory();
 
-        private CommandFactory()
+        public static readonly List<Tuple<string, Dictionary<string, IEnumerable<ParameterInfo>>, Type>> CommandLibraries = new();
+
+        public static void LoadCommands()
         {
-        }
-
-        public List<Tuple<string, Dictionary<string, IEnumerable<ParameterInfo>>, Type>> CommandLibraries =
-            new List<Tuple<string, Dictionary<string, IEnumerable<ParameterInfo>>, Type>>();
-
-        public void LoadInstalledCommands()
-        {
-            // console are located in the commands namespace. Load 
-            // references to each type in that namespace via reflection:
-
             // Use reflection to load all of the classes in the Commands namespace:
-
-            #region When Commands Embedded In Current Project
-
-            //var q = from t in Assembly.GetExecutingAssembly().GetTypes()
-            //    where t.IsClass && t.Namespace == _commandNameSpace
-            //    select t;
-            //var commandClasses = q.ToList();
-
-            #endregion
-
-            #region When Commands Embedded In External Project
 
             var commandsAssembly =
                 GetCommandsLibAssemblyByName(ConfigurationManager.SharedConfigurations["CommandsNamespace"]);
-            //var commandClasses = commandsAssembly.GetTypes().Where(t => t.IsClass).ToList();
+
             // Get Classes And Make Check Constructors Not Included In CommandClasses
             var commandClasses = commandsAssembly.GetTypes()
                 .Where(assembly => assembly.IsClass && !assembly.Name.Contains("<>c")).ToList();
-
-            #endregion
-
 
             foreach (var commandClass in commandClasses)
             {
@@ -64,7 +41,7 @@ namespace TheGreatC.Domain
             }
         }
 
-        public static Assembly GetCommandsLibAssemblyByName(string assemblyName)
+        private static Assembly GetCommandsLibAssemblyByName(string assemblyName)
         {
             try
             {
