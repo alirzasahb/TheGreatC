@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TheGreatC.Common.Utilities
+namespace TheGreatC.Common.Internal.Utilities
 {
     public static class ConsoleWriter
     {

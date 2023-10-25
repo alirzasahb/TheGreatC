@@ -15,10 +15,7 @@
     <PackageReference Include="Spectre.Console" Version="0.47.0" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Figlet\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Figlet\Font\Colossal.flf">
+    <None Update="Resources\Fonts\Figlet\Colossal.flf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

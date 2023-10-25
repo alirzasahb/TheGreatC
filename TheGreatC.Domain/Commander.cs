@@ -17,7 +17,7 @@ namespace TheGreatC.Domain
             // Use reflection to load all of the classes in the Commands namespace:
 
             var commandsAssembly =
-                GetCommandsLibAssemblyByName(ConfigurationManager.SharedConfigurations["CommandsNamespace"]);
+                GetCommandsLibAssemblyByName(ConfigurationManager.SharedConfigurations["Settings:CommandsNamespace"]);
 
             // Get Classes And Make Check Constructors Not Included In CommandClasses
             var commandClasses = commandsAssembly.GetTypes()

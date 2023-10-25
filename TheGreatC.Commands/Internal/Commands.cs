@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using TheGreatC.Common.Internal.Utilities;
 
-namespace TheGreatC.Commands
+namespace TheGreatC.Commands.Internal
 {
     /// <summary>
-    /// Contains the implementations of the built in commands.
+    /// Contains the implementations of the built-in commands.
+    /// Referenced After Allied Mastercomputer From I Have No Mouth, and I Must Scream By Harlan Ellison
     /// </summary>
-    public static class BuiltIn
+    public static class AlliedMastercomputer
     {
         public static List<string> About()
         {
@@ -65,6 +68,16 @@ namespace TheGreatC.Commands
         public static void Exit()
         {
             Environment.Exit(0);
+        }
+
+        /// <summary>
+        /// The Questions That Tim Meredith Asked From The Great C in the Ruins of Federal Research Station 7
+        /// </summary>
+        public static void Ask()
+        {
+            var questions = new List<string>() { "Where does the rain come from?", "What keeps the sun moving through the sky?", "How did the world begin?" };
+
+            SpectreConsoleWriter.Write(SpectreConsoleWriter.SpectreWritingType.Info, questions.OrderBy(s => Guid.NewGuid()).First());
         }
     }
 }

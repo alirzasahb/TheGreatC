@@ -1,6 +1,6 @@
 ﻿using Spectre.Console;
 
-namespace TheGreatC.Common.Utilities
+namespace TheGreatC.Common.Internal.Utilities
 {
     public static class SpectreConsoleWriter
     {
@@ -24,7 +24,7 @@ namespace TheGreatC.Common.Utilities
 
         public static void WriteVersion()
         {
-            var font = FigletFont.Load("Figlet/Font/Colossal.flf");
+            var font = FigletFont.Load("Resources/Fonts/Figlet/Colossal.flf");
 
             AnsiConsole.Write(
                 new FigletText(font, "TheGreatC")

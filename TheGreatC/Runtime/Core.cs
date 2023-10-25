@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using TheGreatC.Common.Utilities;
+using TheGreatC.Common.Internal.Utilities;
 using TheGreatC.Domain;
 using TheGreatC.Domain.Models;
 
@@ -11,6 +11,9 @@ namespace TheGreatC.Runtime
         public static void Start()
         {
             // ToDo: Port All Writers To SpectreConsoleWriter
+
+            // Console & PreStart Required Configurations
+            Configurator.StartUp();
 
             // Create List Of Installed Commands
             Commander.LoadCommands();

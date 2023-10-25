@@ -1,4 +1,8 @@
 ﻿{
-  "Title": "TheGreatC",
-  "CommandsNameSpace": "TheGreatC.Commands"
+  "Settings": {
+    "Title": "TheGreatC",
+    "CommandsNameSpace": "TheGreatC.Commands",
+    "ShowSplash": false,
+    "InternalLibraryClassName": "AlliedMastercomputer"
+  }
 }

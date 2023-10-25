@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using TheGreatC.Common;
 
 namespace TheGreatC.Domain.Models
 {
@@ -26,7 +27,7 @@ namespace TheGreatC.Domain.Models
                     Name = stringArray[i];
 
                     // Set the default:
-                    LibraryClassName = "BuiltIn";
+                    LibraryClassName = ConfigurationManager.SharedConfigurations["Settings:InternalLibraryClassName"];
                     var s = stringArray[0].Split('.');
                     if (s.Length != 2) continue;
                     LibraryClassName = s[0];

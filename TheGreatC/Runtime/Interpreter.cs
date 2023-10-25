@@ -2,19 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using TheGreatC.Common.Internal.Parser;
 using TheGreatC.Domain;
 using TheGreatC.Domain.DTOs;
 using TheGreatC.Domain.Models;
-using static TheGreatC.Common.Utilities.SpectreConsoleWriter;
+using static TheGreatC.Common.Internal.Utilities.SpectreConsoleWriter;
 
 namespace TheGreatC.Runtime
 {
-
-
     public static class Interpreter
     {
-        private static readonly string ReadPrompt = "\u2192 ";
+        private static readonly string ReadPrompt = "\u2192";
 
+        public static string ReadFromConsole()
+        {
+            // Show a prompt, and get input:
+            Console.Write(ReadPrompt);
+            return Console.ReadLine();
+        }
 
         public static CommandResult Execute(Command command)
         {
@@ -166,7 +171,7 @@ namespace TheGreatC.Runtime
                     {
                         // Coming from the Console, all of our arguments are passed in as 
                         // strings. Coerce to the type to match the method paramter:
-                        var value = CoerceArgument(typeRequired, command.Arguments.ElementAt(i));
+                        var value = ArgPreprocessor.CoerceArgument(typeRequired, command.Arguments.ElementAt(i));
                         methodParameterValueList.RemoveAt(i);
                         methodParameterValueList.Insert(i, value);
                     }
@@ -220,190 +225,6 @@ namespace TheGreatC.Runtime
 
                 throw;
             }
-        }
-
-        public static string ReadFromConsole()
-        {
-            // Show a prompt, and get input:
-            Console.Write(ReadPrompt);
-            return Console.ReadLine();
-        }
-
-
-        private static object CoerceArgument(Type requiredType, string inputValue)
-        {
-            var requiredTypeCode = Type.GetTypeCode(requiredType);
-            var exceptionMessage =
-                $"Cannnot Coerce The Input Argument {inputValue} To Required Type {requiredType.Name}";
-
-            object result;
-            switch (requiredTypeCode)
-            {
-                case TypeCode.String:
-                    result = inputValue;
-                    break;
-
-                case TypeCode.Int16:
-                    if (short.TryParse(inputValue, out var number16))
-                    {
-                        result = number16;
-                    }
-                    else
-                    {
-                        throw new ArgumentException(exceptionMessage);
-                    }
-
-                    break;
-
-                case TypeCode.Int32:
-                    if (int.TryParse(inputValue, out var number32))
-                    {
-                        result = number32;
-                    }
-                    else
-                    {
-                        throw new ArgumentException(exceptionMessage);
-                    }
-
-                    break;
-
-                case TypeCode.Int64:
-                    if (long.TryParse(inputValue, out var number64))
-                    {
-                        result = number64;
-                    }
-                    else
-                    {
-                        throw new ArgumentException(exceptionMessage);
-                    }
-
-                    break;
-
-                case TypeCode.Boolean:
-                    if (bool.TryParse(inputValue, out var trueFalse))
-                    {
-                        result = trueFalse;
-                    }
-                    else
-                    {
-                        throw new ArgumentException(exceptionMessage);
-                    }
-
-                    break;
-
-                case TypeCode.Byte:
-                    if (byte.TryParse(inputValue, out var byteValue))
-                    {
-                        result = byteValue;
-                    }
-                    else
-                    {
-                        throw new ArgumentException(exceptionMessage);
-                    }
-
-                    break;
-
-                case TypeCode.Char:
-                    if (char.TryParse(inputValue, out var charValue))
-                    {
-                        result = charValue;
-                    }
-                    else
-                    {
-                        throw new ArgumentException(exceptionMessage);
-                    }
-
-                    break;
-
-                case TypeCode.DateTime:
-                    if (DateTime.TryParse(inputValue, out var dateValue))
-                    {
-                        result = dateValue;
-                    }
-                    else
-                    {
-                        throw new ArgumentException(exceptionMessage);
-                    }
-
-                    break;
-
-                case TypeCode.Decimal:
-                    if (decimal.TryParse(inputValue, out var decimalValue))
-                    {
-                        result = decimalValue;
-                    }
-                    else
-                    {
-                        throw new ArgumentException(exceptionMessage);
-                    }
-
-                    break;
-
-                case TypeCode.Double:
-                    if (double.TryParse(inputValue, out var doubleValue))
-                    {
-                        result = doubleValue;
-                    }
-                    else
-                    {
-                        throw new ArgumentException(exceptionMessage);
-                    }
-
-                    break;
-
-                case TypeCode.Single:
-                    if (float.TryParse(inputValue, out var singleValue))
-                    {
-                        result = singleValue;
-                    }
-                    else
-                    {
-                        throw new ArgumentException(exceptionMessage);
-                    }
-
-                    break;
-
-                case TypeCode.UInt16:
-                    if (ushort.TryParse(inputValue, out var uInt16Value))
-                    {
-                        result = uInt16Value;
-                    }
-                    else
-                    {
-                        throw new ArgumentException(exceptionMessage);
-                    }
-
-                    break;
-
-                case TypeCode.UInt32:
-                    if (uint.TryParse(inputValue, out var uInt32Value))
-                    {
-                        result = uInt32Value;
-                    }
-                    else
-                    {
-                        throw new ArgumentException(exceptionMessage);
-                    }
-
-                    break;
-
-                case TypeCode.UInt64:
-                    if (ulong.TryParse(inputValue, out var uInt64Value))
-                    {
-                        result = uInt64Value;
-                    }
-                    else
-                    {
-                        throw new ArgumentException(exceptionMessage);
-                    }
-
-                    break;
-
-                default:
-                    throw new ArgumentException(exceptionMessage);
-            }
-
-            return result;
         }
     }
 }
