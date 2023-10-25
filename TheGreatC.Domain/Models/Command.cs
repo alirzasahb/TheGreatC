@@ -27,7 +27,7 @@ namespace TheGreatC.Domain.Models
                     Name = stringArray[i];
 
                     // Set the default:
-                    LibraryClassName = ConfigurationManager.SharedConfigurations["Settings:InternalLibraryClassName"];
+                    LibraryClassName = ConfigurationManager.SharedConfigurations["Settings:CommandLibrary:InternalLibraryClassName"];
                     var s = stringArray[0].Split('.');
                     if (s.Length != 2) continue;
                     LibraryClassName = s[0];

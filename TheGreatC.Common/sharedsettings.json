@@ -1,8 +1,13 @@
 ﻿{
   "Settings": {
     "Title": "TheGreatC",
-    "CommandsNameSpace": "TheGreatC.Commands",
-    "ShowSplash": false,
-    "InternalLibraryClassName": "AlliedMastercomputer"
+    "ShowSplash": true,
+    "CommandLibrary": {
+      "CommandsNameSpace": "TheGreatC.Commands",
+      "InternalLibraryClassName": "AlliedMastercomputer"
+    },
+    "Fonts": {
+      "Figlet": "Resources/Fonts/Figlet/Colossal.flf"
+    }
   }
 }

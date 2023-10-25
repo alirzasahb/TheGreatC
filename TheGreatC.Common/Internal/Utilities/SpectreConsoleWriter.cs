@@ -24,10 +24,10 @@ namespace TheGreatC.Common.Internal.Utilities
 
         public static void WriteVersion()
         {
-            var font = FigletFont.Load("Resources/Fonts/Figlet/Colossal.flf");
+            var font = FigletFont.Load(ConfigurationManager.SharedConfigurations["Settings:Fonts:Figlet"]);
 
             AnsiConsole.Write(
-                new FigletText(font, "TheGreatC")
+                new FigletText(font, ConfigurationManager.SharedConfigurations["Settings:Title"])
                     .Centered()
                     );
 
