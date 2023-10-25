@@ -7,7 +7,7 @@ namespace TheGreatC.Commands.Internal
 {
     /// <summary>
     /// Contains the implementations of the built-in commands.
-    /// Referenced After Allied Mastercomputer From I Have No Mouth, and I Must Scream By Harlan Ellison
+    /// Referenced after Allied Mastercomputer from Harlan Ellison's I Have No Mouth, and I Must Scream.
     /// </summary>
     public static class AlliedMastercomputer
     {
