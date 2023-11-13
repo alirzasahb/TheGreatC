@@ -1,5 +1,5 @@
 # The Great C
-> A Simple Solution To Create And Extend Your Own Command Line Interface In C# (dotNet Core)
+> A Simple Solution To Create And Extend Your Own Command Line Interface In C# (.NET 6 LTS)
 
 ## Usage
 **Assumptions:**
@@ -8,16 +8,16 @@ Commands Can Be Defined In Diffrent Ways:
 </br>
 </br>
 First Way:
-You Can Define Your Commands In `Commands.cs` Inside 'TheGreatC.Commands' Project.
+You Can Define Your Commands In `AlliedMastercomputer.cs` Inside 'TheGreatC.Commands' Project.
 </br>
-The 'Default' Class As You Probably Thought Is Default Command Library,
-You Can Define More Commands In 'Default' Command Library Class.
+The 'AlliedMastercomputer' Class As You Probably Thought Is Default Command Library,
+You Can Define More Commands In 'AlliedMastercomputer' Command Library Class.
 </br>
 </br>
 Second Way:
 You Can Create Your Own Command Library Class(es) By Creating A 'Class Libraray' Project And
 </br>
-Change 'CommandsNameSpace' Value In `App.config` From 'TheGreatC' Project. Then Copy Project
+Change 'CommandsNameSpace' Value In `sharedconfiguration.config` From 'TheGreatC.Common' Project. Then Copy Project
 </br>
 DLL To 'TheGreatC' Bin Folder.
 </br>
