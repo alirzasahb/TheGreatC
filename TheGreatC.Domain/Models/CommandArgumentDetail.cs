@@ -1,6 +1,6 @@
 ﻿namespace TheGreatC.Domain.Models
 {
-    public class CommandArgumentsDetail
+    public class CommandArgumentDetail
     {
         public int RequiredArgs { get; set; }
         public int OptionalArgs { get; set; }

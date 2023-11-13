@@ -73,7 +73,7 @@ namespace TheGreatC.Commands.Internal
         /// <summary>
         /// The Questions That Tim Meredith Asked From The Great C in the Ruins of Federal Research Station 7
         /// </summary>
-        public static void Ask()
+        public static void Ask(int q, float qq, string b = "question")
         {
             var questions = new List<string>() { "Where does the rain come from?", "What keeps the sun moving through the sky?", "How did the world begin?" };
 

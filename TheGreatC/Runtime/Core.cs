@@ -33,7 +33,7 @@ namespace TheGreatC.Runtime
                     // If Error Occured
                     if (!result.Response.IsSuccessful)
                     {
-                        if (result.Response.Message.Contains("Not Found"))
+                        if (result.Response.IsNotFound)
                             ConsoleWriter.Write(ConsoleWriter.ConsoleWritingTypes.NotFound, result.Response.Message);
                         else
                             ConsoleWriter.Write(ConsoleWriter.ConsoleWritingTypes.Error, result.Response.Message);

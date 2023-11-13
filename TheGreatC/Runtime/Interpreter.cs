@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using TheGreatC.Common.Internal.Parser;
@@ -24,55 +25,43 @@ namespace TheGreatC.Runtime
         public static CommandResult Execute(Command command)
         {
             // Validate the command name:
-            if (Commander.CommandLibraries.All(x => x.Item1 != command.LibraryClassName))
+            if (Commander.CommandLibraries.TrueForAll(x => !string.Equals(x.Item1, command.LibraryClassName, StringComparison.Ordinal)))
             {
                 return new CommandResult()
                 {
                     Result = null,
                     Response = new CommandResponse()
                     {
-                        Message = "Command Library Was Not Found! :(",
-                        IsSuccessful = false
-                    }
+                        Message = $"Command Library: {command.LibraryClassName} Was Not Found!",
+                        IsSuccessful = false,
+                        IsNotFound = true,
+                    },
                 };
             }
 
             var methodDictionary =
-                Commander.CommandLibraries.First(x => x.Item1 == command.LibraryClassName);
+                Commander.CommandLibraries.First(x => string.Equals(x.Item1, command.LibraryClassName, StringComparison.Ordinal));
 
             if (!methodDictionary.Item2.ContainsKey(command.Name))
             {
                 // Check For Similar Commands From Same Library To Offer
                 var similarCommands = methodDictionary.Item2
-                    .Where(c => c.Key.ToLower().Contains(command.Name.ToLower()))
-                    .ToList().Take(5);
-                var similarCommandsMessage = new List<string> { "Similar Commands: ", "---------" };
-                var keyValuePairs = similarCommands as IList<KeyValuePair<string, IEnumerable<ParameterInfo>>> ??
-                                    similarCommands.ToList();
+                    .Where(c => c.Key.ToLower(CultureInfo.InvariantCulture).Contains(command.Name.ToLower(CultureInfo.InvariantCulture), StringComparison.Ordinal))
+                    .Take(5).ToList();
 
-                if (!keyValuePairs.Any())
-                {
-                    return new CommandResult()
-                    {
-                        Result = null,
-                        Response = new CommandResponse()
-                        {
-                            Message = "Command Was Not Found! :(",
-                            IsSuccessful = false
-                        }
-                    };
-                }
+                var similarCommandsMessage = new List<string> { "Did You Mean: " };
+                if (similarCommands.Any())
+                    similarCommandsMessage.AddRange(similarCommands.Select(similarCommand => $"•   {similarCommand.Key}"));
 
-
-                similarCommandsMessage.AddRange(keyValuePairs.Select(similarCommand => similarCommand.Key));
                 return new CommandResult()
                 {
-                    Result = similarCommandsMessage,
+                    Result = similarCommandsMessage.Count >= 2 ? similarCommandsMessage : null,
                     Response = new CommandResponse()
                     {
-                        Message = "Command Was Not Found! :(",
-                        IsSuccessful = false
-                    }
+                        Message = $"Command: {command.Name} Was Not Found!",
+                        IsSuccessful = false,
+                        IsNotFound = true,
+                    },
                 };
             }
 
@@ -83,34 +72,28 @@ namespace TheGreatC.Runtime
             IEnumerable<ParameterInfo> paramInfoList = methodDictionary.Item2[command.Name].ToList();
 
             // Validate proper # of required arguments provided. Some may be optional:
-            var requiredParams = paramInfoList.Where(p => p.IsOptional == false);
+            var requiredParams = paramInfoList.Where(p => !p.IsOptional);
             var optionalParams = paramInfoList.Where(p => p.IsOptional);
             var requiredParamsInfos = requiredParams as ParameterInfo[] ?? requiredParams.ToArray();
             var optionalParamsInfos = optionalParams as ParameterInfo[] ?? optionalParams.ToArray();
-            var commandArgs = new CommandArgumentsDetail()
+            var commandArgs = new CommandArgumentDetail()
             {
                 OptionalArgs = optionalParamsInfos.Length,
                 ProvidedArgs = command.Arguments.Count(),
-                RequiredArgs = requiredParamsInfos.Length
+                RequiredArgs = requiredParamsInfos.Length,
             };
 
             if (commandArgs.RequiredArgs > commandArgs.ProvidedArgs)
             {
                 var missingRequiredArgs = requiredParamsInfos.Select(x => x.Name).ToList();
 
-                var missingArgsMessage = commandArgs.RequiredArgs >= 2
-                    ? $"Error: 'Missing Required Arguments For Command Found' - {commandArgs.RequiredArgs} Required - Arguments:"
-                    : $"Error: 'Missing Required Argument For Command Found' - {commandArgs.RequiredArgs} Required - Argument:";
+                var missingRequiredArgsMessage = commandArgs.RequiredArgs >= 2
+                    ? string.Create(CultureInfo.InvariantCulture, $"Error: 'Missing Required Arguments For Command Found' - {commandArgs.RequiredArgs} Required - Arguments:")
+                    : string.Create(CultureInfo.InvariantCulture, $"Error: 'Missing Required Argument For Command Found' - {commandArgs.RequiredArgs} Required - Argument:");
+
                 for (var i = 0; i < missingRequiredArgs.Count; i++)
                 {
-                    if (i == 0)
-                    {
-                        missingArgsMessage += $" {missingRequiredArgs[i]}:{requiredParamsInfos[i].ParameterType.Name}";
-                    }
-                    else
-                    {
-                        missingArgsMessage += $", {missingRequiredArgs[i]}:{requiredParamsInfos[i].ParameterType.Name}";
-                    }
+                    missingRequiredArgsMessage += $" {missingRequiredArgs[i]}:{requiredParamsInfos[i].ParameterType.Name},";
                 }
 
                 return new CommandResult()
@@ -118,9 +101,9 @@ namespace TheGreatC.Runtime
                     Result = null,
                     Response = new CommandResponse()
                     {
-                        Message = missingArgsMessage,
-                        IsSuccessful = false
-                    }
+                        Message = missingRequiredArgsMessage.Remove(missingRequiredArgsMessage.Length - 1),
+                        IsSuccessful = false,
+                    },
                 };
             }
 
@@ -128,25 +111,17 @@ namespace TheGreatC.Runtime
             if (commandArgs.OptionalArgs + commandArgs.RequiredArgs > commandArgs.ProvidedArgs)
             {
                 var missingOptionalArgs = optionalParamsInfos.Select(x => x.Name).ToList();
-                var missingOptionalMessage = commandArgs.OptionalArgs >= 2
-                    ? $"Warning: 'Missing Optional Arguments For Following Command' - {commandArgs.OptionalArgs} Optional - Arguments:"
-                    : $"Warning: 'Missing Optional Argument For Following Command' - {commandArgs.OptionalArgs} Optional - Argument:";
+                var missingOptionalArgsMessage = commandArgs.OptionalArgs >= 2
+                    ? string.Create(CultureInfo.InvariantCulture, $"Warning: 'Missing Optional Arguments For Following Command' - {commandArgs.OptionalArgs} Optional - Arguments:")
+                    : string.Create(CultureInfo.InvariantCulture, $"Warning: 'Missing Optional Argument For Following Command' - {commandArgs.OptionalArgs} Optional - Argument:");
 
                 for (var i = 0; i < missingOptionalArgs.Count; i++)
                 {
-                    if (i == 0)
-                    {
-                        missingOptionalMessage +=
-                            $" {missingOptionalArgs[i]}:{optionalParamsInfos[i].ParameterType.Name} - DefaultValue:'{optionalParamsInfos[i].RawDefaultValue}'";
-                    }
-                    else
-                    {
-                        missingOptionalMessage +=
-                            $", {missingOptionalArgs[i]}:{optionalParamsInfos[i].ParameterType.Name} - DefaultValue:'{optionalParamsInfos[i].RawDefaultValue}'";
-                    }
+                    missingOptionalArgsMessage +=
+                        $" {missingOptionalArgs[i]}:{optionalParamsInfos[i].ParameterType.Name} - DefaultValue:'{optionalParamsInfos[i].RawDefaultValue}',";
                 }
 
-                Write(SpectreWritingType.Warning, missingOptionalMessage);
+                Write(SpectreWritingType.Warning, missingOptionalArgsMessage.Remove(missingOptionalArgsMessage.Length - 1));
             }
 
             // Make sure all arguments are coerced to the proper type, and that there is a 
@@ -182,7 +157,7 @@ namespace TheGreatC.Runtime
                         var argumentTypeName = typeRequired.Name;
                         var message =
                             $"The Value Passed For Argument '{argumentName}' Cannot Be Parsed To Type '{argumentTypeName}'.";
-                        throw new ArgumentException(message);
+                        throw new ArgumentException(message, argumentName);
                     }
                 }
             }
@@ -206,7 +181,7 @@ namespace TheGreatC.Runtime
                 var result = typeInfo.InvokeMember(
                     command.Name,
                     BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.Public,
-                    null, null, inputArgs);
+                    binder: null, target: null, inputArgs, CultureInfo.InvariantCulture);
 
                 return new CommandResult()
                 {
@@ -214,8 +189,8 @@ namespace TheGreatC.Runtime
                     Response = new CommandResponse()
                     {
                         Message = "",
-                        IsSuccessful = true
-                    }
+                        IsSuccessful = true,
+                    },
                 };
             }
             catch (TargetInvocationException ex)
