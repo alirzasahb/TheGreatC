@@ -1,28 +1,15 @@
 # The Great C
-> A Simple Solution To Create And Extend Your Own Command Line Interface In C# (.NET 6 LTS)
+> Command Line Interface (CLI) Creation Unlimited! 💻
 
 ## Usage
-**Assumptions:**
-</br>
-Commands Can Be Defined In Diffrent Ways:
-</br>
-</br>
-First Way:
-You Can Define Your Commands In `AlliedMastercomputer.cs` Inside 'TheGreatC.Commands' Project.
-</br>
-The 'AlliedMastercomputer' Class As You Probably Thought Is Default Command Library,
-You Can Define More Commands In 'AlliedMastercomputer' Command Library Class.
-</br>
-</br>
-Second Way:
-You Can Create Your Own Command Library Class(es) By Creating A 'Class Libraray' Project And
-</br>
-Change 'CommandsNameSpace' Value In `sharedconfiguration.config` From 'TheGreatC.Common' Project. Then Copy Project
-</br>
-DLL To 'TheGreatC' Bin Folder.
-</br>
 
-**Wait, How To Define My Command?**
+Unleash Your Creativity:
+
+* Way of the Innovator: Define Your Commands in AlliedMastercomputer.cs, located inside 'TheGreatC.Commands' Project. AlliedMastercomputer, the ultimate command library, allows you to customize your commands even further. Expand the possibilities!
+
+* Forge Your Own Path: Create Command Libraries of your own! Start by generating a 'Class Library' Project. In the sharedconfiguration.config file of the 'TheGreatC.Common' Project, modify the 'CommandsNameSpace' value. Next, ensure your Project DLL finds its new home in the 'TheGreatC' Bin Folder. Embrace the boundless potential of your unique command library class(es). No limits, only possibilities!
+
+**How To Define My Command?**
 </br>
 </br>
 ***Default Commands Library***
@@ -51,7 +38,7 @@ public class myCommandsLib{
 }
 ```
 
-**Umm, How To Excute My Command?**
+**How To Excute My Command?**
 </br>
 </br>
 ***Default Command Library***
@@ -63,8 +50,8 @@ public class myCommandsLib{
 -> myCommandsLib.DoSomething 55 "My Data"
 ```
 
-## Credits 📚
-Extracted And Developed From 'ConsoleApplicationBase' Project, Original Author John Atten:
+## Credits 📚🔮
+Brought forth from the depths of the 'ConsoleApplicationBase' project, emerges a captivating piece of work crafted by the ingenious mind of the mastermind, John Atten.
 </br>
  https://github.com/TypecastException/ConsoleApplicationBase
 </br>
