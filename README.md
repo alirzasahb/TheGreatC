@@ -1,7 +1,7 @@
 # The Great C
-> Command Line Interface (CLI) Creation Unlimited! 💻
+> Command Line Interface (CLI) Creation Unlimited! 🖥️
 
-## Usage
+## Usage 🔮
 
 Unleash Your Creativity:
 
@@ -9,9 +9,8 @@ Unleash Your Creativity:
 
 * Forge Your Own Path: Create Command Libraries of your own! Start by generating a 'Class Library' Project. In the sharedconfiguration.config file of the 'TheGreatC.Common' Project, modify the 'CommandsNameSpace' value. Next, ensure your Project DLL finds its new home in the 'TheGreatC' Bin Folder. Embrace the boundless potential of your unique command library class(es). No limits, only possibilities!
 
-**How To Define My Command?**
-</br>
-</br>
+### How To Define My Command?
+
 ***Default Commands Library***
 </br>
 
@@ -38,9 +37,8 @@ public class myCommandsLib{
 }
 ```
 
-**How To Excute My Command?**
-</br>
-</br>
+### How To Excute My Command?
+
 ***Default Command Library***
 ```
 → DoSomething 55 "My Data"
@@ -50,16 +48,11 @@ public class myCommandsLib{
 → myCommandsLib.DoSomething 55 "My Data"
 ```
 
-## Credits 📚🔮
-Brought forth from the depths of the 'ConsoleApplicationBase' project, emerges a captivating piece of work crafted by the ingenious mind of the mastermind, John Atten.
+## Credits 📚
+Brought forth from the depths of the ['ConsoleApplicationBase'](https://github.com/TypecastException/ConsoleApplicationBase) project, emerges a captivating piece of work crafted by the ingenious mind of the mastermind, [John Atten](https://github.com/TypecastException/).
 </br>
- https://github.com/TypecastException/ConsoleApplicationBase
-</br>
-</br>
-Ascii Arts Extracted From: http://www.ascii-art.de/
-</br>
-Desert - Bob Allison
-</br>
-UFO - unknown
-</br>
-Universe - unknown
+
+Ascii Arts Extracted From [ascii-art.de](http://www.ascii-art.de/)
+* Desert - Bob Allison
+* UFO - unknown
+* Universe - unknown
