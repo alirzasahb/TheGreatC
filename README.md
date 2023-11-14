@@ -43,11 +43,11 @@ public class myCommandsLib{
 </br>
 ***Default Command Library***
 ```
--> DoSomething 55 "My Data"
+→ DoSomething 55 "My Data"
 ```
 ***Your Own Command Library***
 ```
--> myCommandsLib.DoSomething 55 "My Data"
+→ myCommandsLib.DoSomething 55 "My Data"
 ```
 
 ## Credits 📚🔮
