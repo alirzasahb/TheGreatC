@@ -1,5 +1,5 @@
 # The Great C
-> Command Line Interface (CLI) Creation Unlimited! 🖥️
+>  A Simple Solution To Create And Extend Your Own Command Line Interface In C#  🖥️
 
 ## Usage 🔮
 
