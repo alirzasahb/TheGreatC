@@ -5,9 +5,9 @@
 
 There are two primary methods for defining your commands:
 
-Method One: You can define your commands directly within the AlliedMastercomputer.cs file, located in the 'TheGreatC.Commands' project. As you may know, the AlliedMastercomputer class serves as the default command library, and you are welcome to add additional commands within this class.
+(1) You can define your commands directly within the AlliedMastercomputer.cs file, located in the 'TheGreatC.Commands' project. As you may know, the AlliedMastercomputer class serves as the default command library, and you are welcome to add additional commands within this class.
 
-Method Two: Alternatively, you have the option to create your own command library classes by establishing a 'Class Library' project. After doing so, please update the CommandsNameSpace value in the sharedconfiguration.config file from the 'TheGreatC.Common' project. Once you've completed these steps, make sure to copy the project DLL into the 'TheGreatC' bin folder.
+(2) Alternatively, you have the option to create your own command library classes by establishing a 'Class Library' project. After doing so, please update the CommandsNameSpace value in the sharedconfiguration.config file from the 'TheGreatC.Common' project. Once you've completed these steps, make sure to copy the project DLL into the 'TheGreatC' bin folder.
 
 ### How To Define Commands?
 
