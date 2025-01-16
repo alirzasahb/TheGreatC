@@ -40,7 +40,7 @@ namespace TheGreatC.Runtime
             }
 
             var methodDictionary =
-                Commander.CommandLibraries.First(x => string.Equals(x.Item1, command.LibraryClassName, StringComparison.Ordinal));
+                Commander.CommandLibraries.First(x => string.Equals(x.Item1, command.LibraryClassName, StringComparison.OrdinalIgnoreCase));
 
             if (!methodDictionary.Item2.ContainsKey(command.Name))
             {
