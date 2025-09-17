@@ -16,7 +16,7 @@
     <PackageReference Include="Spectre.Console" Version="0.51.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.9" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.9" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.9" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Resources\Fonts\Figlet\Colossal.flf">
